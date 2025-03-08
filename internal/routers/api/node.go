@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/wensiet/morchy-api/internal/entity"
 	"github.com/wensiet/morchy-api/internal/usecase/node"
+	"github.com/wensiet/morchy-api/pkg/entity"
 )
 
 type INodeRouter interface {

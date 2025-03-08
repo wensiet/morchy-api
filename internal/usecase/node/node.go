@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/wensiet/morchy-api/internal/entity"
 	"github.com/wensiet/morchy-api/internal/usecase"
+	"github.com/wensiet/morchy-api/pkg/entity"
 )
 
 const (
