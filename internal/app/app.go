@@ -2,9 +2,11 @@ package app
 
 import (
 	"context"
+	_ "github.com/wensiet/morchy-api/docs"
 	"github.com/wensiet/morchy-api/internal/config"
 	"github.com/wensiet/morchy-api/internal/infrastructure"
 	"github.com/wensiet/morchy-api/internal/routers"
+	"github.com/wensiet/morchy-api/internal/usecase/container"
 	"github.com/wensiet/morchy-api/internal/usecase/node"
 	"log"
 )
@@ -33,9 +35,9 @@ func Run() {
 	}
 
 	nodeService := node.NewService(pgPool)
-	//nodeService := node.NewMockService(pgPool)
+	containerService := container.NewService(pgPool)
 
-	router := routers.InitRouter(nodeService)
+	router := routers.InitRouter(nodeService, containerService)
 
 	err = router.Run()
 	if err != nil {

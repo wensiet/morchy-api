@@ -1,0 +1,327 @@
+definitions:
+  entity.AddContainer:
+    properties:
+      image:
+        type: string
+      node_id:
+        type: string
+    type: object
+  entity.Container:
+    properties:
+      id:
+        type: string
+      image:
+        type: string
+      node_id:
+        type: string
+      status:
+        $ref: '#/definitions/entity.ContainerStatus'
+    type: object
+  entity.ContainerStatus:
+    enum:
+    - running
+    - failed
+    - pending
+    type: string
+    x-enum-varnames:
+    - ContainerStatusRunning
+    - ContainerStatusFailed
+    - ContainerStatusPending
+  entity.Node:
+    properties:
+      containers:
+        items:
+          $ref: '#/definitions/entity.Container'
+        type: array
+      id:
+        type: string
+      status:
+        $ref: '#/definitions/entity.NodeStatus'
+    type: object
+  entity.NodeStatus:
+    enum:
+    - new
+    - running
+    - failed
+    type: string
+    x-enum-varnames:
+    - NewNodeStatus
+    - RunningNodeStatus
+    - FailedNodeStatus
+info:
+  contact: {}
+paths:
+  /api/v1/container:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all containers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Container'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all containers
+      tags:
+      - Container
+    post:
+      consumes:
+      - application/json
+      description: Creates a new container
+      parameters:
+      - description: New container data
+        in: body
+        name: container
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddContainer'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Container'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add a new container
+      tags:
+      - Container
+    put:
+      consumes:
+      - application/json
+      description: Updates the details of an existing container
+      parameters:
+      - description: Updated container data
+        in: body
+        name: container
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Container'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing container
+      tags:
+      - Container
+  /api/v1/container/{resource_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a container by its ID
+      parameters:
+      - description: Container's ID
+        in: path
+        name: resource_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a container
+      tags:
+      - Container
+    get:
+      consumes:
+      - application/json
+      description: Allows to get a container by its ID
+      parameters:
+      - description: Container's ID
+        in: path
+        name: resource_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Container'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get container by id
+      tags:
+      - Container
+  /api/v1/node:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all nodes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Node'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all nodes
+      tags:
+      - Node
+    post:
+      consumes:
+      - application/json
+      description: Creates a new node
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Node'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add a new node
+      tags:
+      - Node
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing node
+      parameters:
+      - description: Updated Node Data
+        in: body
+        name: node
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Node'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a node
+      tags:
+      - Node
+  /api/v1/node/{resource_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a node by its ID
+      parameters:
+      - description: Node's ID
+        in: path
+        name: resource_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a node
+      tags:
+      - Node
+    get:
+      consumes:
+      - application/json
+      description: Allows to get node with it ID
+      parameters:
+      - description: Node's ID
+        in: path
+        name: resource_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get node by id
+      tags:
+      - Node
+swagger: "2.0"

@@ -11,12 +11,12 @@ import (
 
 const (
 	GetNodeQueryWithContainers = `
-		SELECT n.id, n.status, c.id, c.node_id, c.image
+		SELECT n.id, n.status, c.id, c.node_id, c.image, c.status
 		FROM node n
 		LEFT JOIN container c ON n.id = c.node_id
 		WHERE n.id = $1`
 	ListNodesQueryWithContainers = `
-		SELECT n.id, n.status, c.id, c.node_id, c.name, c.image
+		SELECT n.id, n.status, c.id, c.node_id, c.image, c.status
 		FROM node n
 		LEFT JOIN container c ON n.id = c.node_id`
 	AddNodeQuery    = "INSERT INTO node(id, status) VALUES($1, $2)"
@@ -58,16 +58,19 @@ func (s *Service) GetNode(ctx context.Context, id uuid.UUID) (*entity.Node, erro
 
 	for rows.Next() {
 		var container entity.Container
-		var image sql.NullString
+		var image, status sql.NullString
 
-		err := rows.Scan(&node.ID, &node.Status, &container.ID, &container.NodeID, &image)
+		err := rows.Scan(&node.ID, &node.Status, &container.ID, &container.NodeID, &image, &status)
 		if err != nil {
 			return nil, err
 		}
 
-		if container.ID != uuid.Nil {
-			if image.Valid {
-				container.Image = image.String
+		if container.ID != uuid.Nil && image.Valid && status.Valid {
+			container.Image = image.String
+			container.Status = entity.ContainerStatus(status.String)
+			err := container.Status.Validate()
+			if err != nil {
+				return nil, err
 			}
 			node.Containers = append(node.Containers, container)
 		}
